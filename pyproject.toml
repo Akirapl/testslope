@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "testslope"
+version = "0.1.0"
+description = "A static report of a Python test suite: code previews, risk flags, history and runner coverage."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff>=0.6"]
+
+[project.scripts]
+testslope = "testslope.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 160
+target-version = "py310"
+extend-exclude = ["example"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "TID"]
+
+# testslope's own tests follow the rules it reports on: no sleeping in tests.
+[tool.ruff.lint.flake8-tidy-imports.banned-api]
+"time.sleep".msg = "Tests must not wait for real time; wait for a condition or inject a clock."
+
+[tool.ruff.lint.per-file-ignores]
+"src/testslope/report.py" = ["E501"]  # the embedded HTML/JS template has long lines
+"tests/*.py" = ["E501"]               # fixtures with long literal dicts
